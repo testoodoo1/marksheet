@@ -44,30 +44,21 @@
 		    <th>Classes</th>
 		  </tr>	  
 			  <tr>
-			    <td>Maths</td>
-			    <td><input name="maths_mark" id="mark" maxlength="3" size="3"></td>
-			    <td>Germany</td>
+				  <?php
+				  	$result1 = $conn->query("SELECT * FROM `Subject Master`");
+				  			
+
+				  	while($row1 = $result1->fetch_assoc()) {
+
+
+				  ?>
+				  	<td><?php echo $row1["Subject"] ?></td>
+				  	<td><input name="<?php echo $row1['Subject ID'] ?>" id="mark" maxlength="3" size="3"></td>
+				  	<td>test</td> 
+
+				  
 			  </tr>
-			  <tr>
-			    <td>Science</td>
-			    <td><input name="science_mark" id="mark" maxlength="3" size="3"></td>
-			    <td>Mexico</td>
-			  </tr>
-			  <tr>
-			    <td>Social</td>
-			    <td><input name="social_mark" id="mark" maxlength="3" size="3"></td>
-			    <td>Austria</td>
-			  </tr>
-			  <tr>
-			    <td>English</td>
-			    <td><input name="english_mark" id="mark" maxlength="3" size="3"></td>
-			    <td>UK</td>
-			  </tr>
-			  <tr>
-			    <td>Malayalam</td>
-			    <td><input name="malayalam_mark" id="mark" maxlength="3" size="3"></td>
-			    <td>Canada</td>
-		  	  </tr>
+			  <?php } ?>
 		  	  <tr>
 		  	    <td colspan="3">
 		  	  	 <input type="submit" value="submit" id="markDetail">
@@ -77,5 +68,22 @@
 </form>
 		</table>	
 	</body>
+<script>
+$(function() {
+	$('#marks').submit(function(e) {
+		e.preventDefault();
+		$.ajax({
+			type : 'POST',
+			url  : 'add_mark.php',
+			data : { 
+				student_name : student_name,
+
+
+			}
+		})
+	})
+})
+
+</script>
 
 </html>
