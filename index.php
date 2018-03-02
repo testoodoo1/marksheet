@@ -23,17 +23,19 @@
 		</style>		
 	</head>
 	<body>
+
 <form action="" id="marks" method="post">		
-	<select id="student_name" name="student_name">
+	<select id="student_id" name="student_id">
 		<option value=" "> -- Select Name -- </option>
 		<?php 
 			$conn = new mysqli('localhost','root','1projectK!','marksheet');
-			$result = $conn->query("SELECT Name FROM `Student Table`");
+			$result = $conn->query("SELECT * FROM `Student Table`");
 			while($row = $result->fetch_assoc()){
 		?>
-		<option value="<?php echo $row["Name"] ?>"> <?php echo $row["Name"] ?> </option>;
+		<option value="<?php echo $row["Student ID"] ?>"> <?php echo $row["Name"] ?> </option>;
 		<?php
 			}
+			mysqli_close($conn);
 		?>
 	</select>
 	<br/><br/>
@@ -45,20 +47,15 @@
 		  </tr>	  
 			  <tr>
 				  <?php
-				  	$result1 = $conn->query("SELECT * FROM `Subject Master`");
-				  			
-
+				  	$con = new mysqli('localhost','root','1projectK!','marksheet');
+				  	$result1 = $con->query("SELECT * FROM `Subject Master`");
 				  	while($row1 = $result1->fetch_assoc()) {
-
-
 				  ?>
 				  	<td><?php echo $row1["Subject"] ?></td>
 				  	<td><input name="<?php echo $row1['Subject ID'] ?>" id="mark" maxlength="3" size="3"></td>
-				  	<td>test</td> 
-
-				  
+				  	<td>test</td>
 			  </tr>
-			  <?php } ?>
+			  <?php  } mysqli_close($con); ?>
 		  	  <tr>
 		  	    <td colspan="3">
 		  	  	 <input type="submit" value="submit" id="markDetail">
@@ -68,22 +65,40 @@
 </form>
 		</table>	
 	</body>
-<script>
-$(function() {
-	$('#marks').submit(function(e) {
-		e.preventDefault();
-		$.ajax({
-			type : 'POST',
-			url  : 'add_mark.php',
-			data : { 
-				student_name : student_name,
-
+	<?php
+	if(isset($_POST['student_id'])) 
+		{
+			$student_id = $_POST['student_id'];
+				$conn = new mysqli('localhost','root','1projectK!','marksheet');
+			for($i =1; $i<6; $i++){
+				$mark = $_POST['Sub'.$i];
+				$query2 = "INSERT INTO `Marks Table` (`Student ID` ,`Subject ID` ,`Marks`) VALUES ('$student_id', 'Sub$i', '$mark');";
+				if ($conn->multi_query($query2) === TRUE) {
+					echo "New records created successfully";
+				} else {
+					echo "Error: " . $query2 . "<br>" . $conn->error;
+				}
 
 			}
-		})
-	})
-})
+			mysqli_close($conn);
+		}
+	?>
 
+<script>
+$(function() {
+	$('#marks').submit(function() {
+		data = $(this).serialize();
+		$.ajax({
+			type : "POST",
+			url  : "index.php",
+			data : data,
+			dataType: 'text',
+			success : function(data){
+				
+			}
+		})
+	});
+})
 </script>
 
 </html>
