@@ -28,14 +28,14 @@
 	<select id="student_id" name="student_id">
 		<option value=" "> -- Select Name -- </option>
 		<?php 
-			$conn = new mysqli('localhost','root','1projectK!','marksheet');
-			$result = $conn->query("SELECT * FROM `Student Table`");
+			$con1 = mysqli_connect('localhost','root','1projectK!','marksheet');
+			$result = $con1->query("SELECT * FROM `Student Table`");
 			while($row = $result->fetch_assoc()){
 		?>
 		<option value="<?php echo $row["Student ID"] ?>"> <?php echo $row["Name"] ?> </option>;
 		<?php
 			}
-			mysqli_close($conn);
+			mysqli_close($con1);
 		?>
 	</select>
 	<br/><br/>
@@ -47,46 +47,47 @@
 		  </tr>	  
 			  <tr>
 				  <?php
-				  	$con = new mysqli('localhost','root','1projectK!','marksheet');
-				  	$result1 = $con->query("SELECT * FROM `Subject Master`");
+				  	$conn = mysqli_connect('localhost','root','1projectK!','marksheet');
+				  	$result1 = $conn->query("SELECT * FROM `Subject Master`");
 				  	while($row1 = $result1->fetch_assoc()) {
 				  ?>
 				  	<td><?php echo $row1["Subject"] ?></td>
 				  	<td><input name="<?php echo $row1['Subject ID'] ?>" id="mark" maxlength="3" size="3"></td>
 				  	<td>test</td>
 			  </tr>
-			  <?php  } mysqli_close($con); ?>
+			  <?php  } mysqli_close($conn); ?>
 		  	  <tr>
 		  	    <td colspan="3">
 		  	  	 <input type="submit" value="submit" id="markDetail">
-		  	  	 <input type="submit" value="Proceed To Marksheet" id="marksheet">
+
 		  	  	</td>
 		  	  </tr>
-</form>
 		</table>	
+</form>
+		
 	</body>
 	<?php
-	if(isset($_POST['student_id'])) 
+		if(isset($_POST['student_id'])) 
 		{
 			$student_id = $_POST['student_id'];
-				$conn = new mysqli('localhost','root','1projectK!','marksheet');
+			$con = mysqli_connect('localhost','root','1projectK!','marksheet');
 			for($i =1; $i<6; $i++){
 				$mark = $_POST['Sub'.$i];
-				$query2 = "INSERT INTO `Marks Table` (`Student ID` ,`Subject ID` ,`Marks`) VALUES ('$student_id', 'Sub$i', '$mark');";
-				if ($conn->multi_query($query2) === TRUE) {
+				$sql = "INSERT INTO `Marks Table` (`Student ID` ,`Subject ID` ,`Marks`) VALUES ('$student_id', 'Sub$i', '$mark');";
+				if (mysqli_query($con, $sql)) {
 					echo "New records created successfully";
 				} else {
 					echo "Error: " . $query2 . "<br>" . $conn->error;
 				}
-
-			}
-			mysqli_close($conn);
+			}	
+			mysqli_close($con);		
 		}
 	?>
 
 <script>
 $(function() {
 	$('#marks').submit(function() {
+		alert('hi');
 		data = $(this).serialize();
 		$.ajax({
 			type : "POST",
@@ -94,7 +95,7 @@ $(function() {
 			data : data,
 			dataType: 'text',
 			success : function(data){
-				
+
 			}
 		})
 	});
